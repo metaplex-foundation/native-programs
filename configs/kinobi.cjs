@@ -6,48 +6,48 @@ const clientDir = path.join(__dirname, "..", "clients");
 const idlDir = path.join(__dirname, "..", "idls");
 
 // Instanciate Kinobi.
-const kinobi = k.createFromIdls([path.join(idlDir, "mpl_project_name_program.json")]);
+const kinobi = k.createFromIdls([path.join(idlDir, "system_program.json")]);
 
 // Update programs.
 kinobi.update(
   new k.updateProgramsVisitor({
-    mplProjectNameProgram: { name: "mplProjectName" },
+    systemProgramProgram: { name: "systemProgram" },
   })
 );
 
 // Update accounts.
-kinobi.update(
-  new k.updateAccountsVisitor({
-    myPdaAccount: {
-      seeds: [
-        k.constantPdaSeedNodeFromString("myPdaAccount"),
-        k.programIdPdaSeedNode(),
-        k.variablePdaSeedNode("authority", k.publicKeyTypeNode(), "The address of the authority"),
-        k.variablePdaSeedNode("name", k.stringTypeNode(), "The name of the account"),
-      ],
-    },
-  })
-);
+// kinobi.update(
+//   new k.updateAccountsVisitor({
+//     myPdaAccount: {
+//       seeds: [
+//         k.constantPdaSeedNodeFromString("myPdaAccount"),
+//         k.programIdPdaSeedNode(),
+//         k.variablePdaSeedNode("authority", k.publicKeyTypeNode(), "The address of the authority"),
+//         k.variablePdaSeedNode("name", k.stringTypeNode(), "The name of the account"),
+//       ],
+//     },
+//   })
+// );
 
 // Update instructions.
-kinobi.update(
-  new k.updateInstructionsVisitor({
-    create: {
-      byteDeltas: [
-        k.instructionByteDeltaNode(k.accountLinkNode("myAccount")),
-      ],
-    },
-  })
-);
+// kinobi.update(
+//   new k.updateInstructionsVisitor({
+//     create: {
+//       byteDeltas: [
+//         k.instructionByteDeltaNode(k.accountLinkNode("myAccount")),
+//       ],
+//     },
+//   })
+// );
 
 // Set ShankAccount discriminator.
-const key = (name) => ({ field: "key", value: k.enumValueNode("Key", name) });
-kinobi.update(
-  new k.setAccountDiscriminatorFromFieldVisitor({
-    myAccount: key("MyAccount"),
-    myPdaAccount: key("MyPdaAccount"),
-  })
-);
+// const key = (name) => ({ field: "key", value: k.enumValueNode("Key", name) });
+// kinobi.update(
+//   new k.setAccountDiscriminatorFromFieldVisitor({
+//     myAccount: key("MyAccount"),
+//     myPdaAccount: key("MyPdaAccount"),
+//   })
+// );
 
 // Render JavaScript.
 const jsDir = path.join(clientDir, "js", "src", "generated");

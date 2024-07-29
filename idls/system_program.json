@@ -1,0 +1,613 @@
+{
+    "version": "0.1.0",
+    "name": "system_program",
+    "instructions": [
+        {
+            "name": "CreateAccount",
+            "docs": [
+                "Create a new account"
+            ],
+            "accounts": [
+                {
+                    "name": "fundingAccount",
+                    "isMut": true,
+                    "isSigner": true,
+                    "docs": [
+                        "The payer for the new account"
+                    ]
+                },
+                {
+                    "name": "newAccount",
+                    "isMut": true,
+                    "isSigner": true,
+                    "docs": [
+                        "The account to create"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "lamports",
+                    "type": "u64",
+                    "docs": [
+                        "Number of lamports to transfer to the new account"
+                    ]
+                },
+                {
+                    "name": "space",
+                    "type": "u64",
+                    "docs": [
+                        "Number of bytes of memory to allocate"
+                    ]
+                },
+                {
+                    "name": "owner",
+                    "type": "publicKey",
+                    "docs": [
+                        "Address of program that will own the new account"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 0
+            }
+        },
+        {
+            "name": "Assign",
+            "docs": [
+                "Assign account to a program"
+            ],
+            "accounts": [
+                {
+                    "name": "account",
+                    "isMut": true,
+                    "isSigner": true,
+                    "docs": [
+                        "The account to assign to the program"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "owner",
+                    "type": "publicKey",
+                    "docs": [
+                        "The program to assign the account to"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 1
+            }
+        },
+        {
+            "name": "Transfer",
+            "docs": [
+                "Transfer lamports"
+            ],
+            "accounts": [
+                {
+                    "name": "fundingAccount",
+                    "isMut": true,
+                    "isSigner": true,
+                    "docs": [
+                        "The account funding the transfer"
+                    ]
+                },
+                {
+                    "name": "recipientAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account receiving the transfer"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "lamports",
+                    "type": "u64",
+                    "docs": [
+                        "Number of lamports to transfer"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 2
+            }
+        },
+        {
+            "name": "CreateAccountWithSeed",
+            "docs": [
+                "Create a new account at an address derived from a base pubkey and a seed"
+            ],
+            "accounts": [
+                {
+                    "name": "fundingAccount",
+                    "isMut": true,
+                    "isSigner": true,
+                    "docs": [
+                        "The payer for the new account"
+                    ]
+                },
+                {
+                    "name": "newAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account to create"
+                    ]
+                },
+                {
+                    "name": "baseAccount",
+                    "isMut": false,
+                    "isSigner": true,
+                    "isOptional": true,
+                    "docs": [
+                        "The account matching the base Pubkey below must be provided as a signer, but may be the same as the funding account and provided as account 0"
+                    ]
+                }
+            ],
+            "args": [],
+            "legacyOptionalAccountsStrategy": true,
+            "discriminant": {
+                "type": "u32",
+                "value": 3
+            }
+        },
+        {
+            "name": "AdvanceNonceAccount",
+            "docs": [
+                "Consumes a stored nonce, replacing it with a successor"
+            ],
+            "accounts": [
+                {
+                    "name": "nonceAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The nonce account to advance"
+                    ]
+                },
+                {
+                    "name": "recentBlockhashes",
+                    "isMut": false,
+                    "isSigner": false,
+                    "docs": [
+                        "The recentBlockhashes sysvar"
+                    ]
+                },
+                {
+                    "name": "nonceAuthority",
+                    "isMut": false,
+                    "isSigner": true,
+                    "docs": [
+                        "The current authority of the nonce account"
+                    ]
+                }
+            ],
+            "args": [],
+            "discriminant": {
+                "type": "u32",
+                "value": 4
+            }
+        },
+        {
+            "name": "WithdrawNonceAccount",
+            "docs": [
+                "Withdraw funds from a nonce account"
+            ],
+            "accounts": [
+                {
+                    "name": "nonceAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The nonce account to withdraw from"
+                    ]
+                },
+                {
+                    "name": "recipientAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account to receive the lamports"
+                    ]
+                },
+                {
+                    "name": "recentBlockhashes",
+                    "isMut": false,
+                    "isSigner": false,
+                    "docs": [
+                        "The recentBlockhashes sysvar"
+                    ]
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false,
+                    "docs": [
+                        "The Rent sysvar"
+                    ]
+                },
+                {
+                    "name": "nonceAuthority",
+                    "isMut": false,
+                    "isSigner": true,
+                    "docs": [
+                        "The current authority of the nonce account"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "lamports",
+                    "type": "u64",
+                    "docs": [
+                        "The number of  lamports to withdraw, which must leave the account balance above the rent exempt reserve or at zero"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 5
+            }
+        },
+        {
+            "name": "InitializeNonceAccount",
+            "docs": [
+                "Drive state of Uninitialized nonce account to Initialized, setting the nonce value"
+            ],
+            "accounts": [
+                {
+                    "name": "nonceAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The nonce account to initialize"
+                    ]
+                },
+                {
+                    "name": "recentBlockhashes",
+                    "isMut": false,
+                    "isSigner": false,
+                    "docs": [
+                        "The recentBlockhashes sysvar"
+                    ]
+                },
+                {
+                    "name": "rent",
+                    "isMut": false,
+                    "isSigner": false,
+                    "docs": [
+                        "The Rent sysvar"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "authority",
+                    "type": "publicKey",
+                    "docs": [
+                        "The authority specifies the entity authorized to execute nonce instruction on the account, no signatures are required to execute this instruction, enabling derived nonce account addresses"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 6
+            }
+        },
+        {
+            "name": "AuthorizeNonceAccount",
+            "docs": [
+                "Change the entity authorized to execute nonce instructions on the account"
+            ],
+            "accounts": [
+                {
+                    "name": "nonceAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The nonce account to change the authority of"
+                    ]
+                },
+                {
+                    "name": "nonceAuthority",
+                    "isMut": false,
+                    "isSigner": true,
+                    "docs": [
+                        "The current authority of the nonce account"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "newAuthority",
+                    "type": "publicKey",
+                    "docs": [
+                        "The new authority to set on the nonce account"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 7
+            }
+        },
+        {
+            "name": "Allocate",
+            "docs": [
+                "Allocate space in a (possibly new) account without funding"
+            ],
+            "accounts": [
+                {
+                    "name": "account",
+                    "isMut": true,
+                    "isSigner": true,
+                    "docs": [
+                        "The account to allocate space for"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "space",
+                    "type": "u64",
+                    "docs": [
+                        "Number of bytes to allocate"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 8
+            }
+        },
+        {
+            "name": "AllocateWithSeed",
+            "docs": [
+                "Allocate space for and assign an account at an address derived from a base public key and a seed"
+            ],
+            "accounts": [
+                {
+                    "name": "account",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account to allocate space for"
+                    ]
+                },
+                {
+                    "name": "base",
+                    "isMut": false,
+                    "isSigner": true,
+                    "docs": [
+                        "The base public key to use for the account's address derivation"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "basePubkey",
+                    "type": "publicKey",
+                    "docs": [
+                        "The base public key to use for the account's address derivation"
+                    ]
+                },
+                {
+                    "name": "seed",
+                    "type": "string",
+                    "docs": [
+                        "The seed to use for the account's address derivation"
+                    ]
+                },
+                {
+                    "name": "space",
+                    "type": "u64",
+                    "docs": [
+                        "Number of bytes to allocate"
+                    ]
+                },
+                {
+                    "name": "owner",
+                    "type": "publicKey",
+                    "docs": [
+                        "Owner program account"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 9
+            }
+        },
+        {
+            "name": "AssignWithSeed",
+            "docs": [
+                "Assign account to a program based on a seed"
+            ],
+            "accounts": [
+                {
+                    "name": "account",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account to assign to the program"
+                    ]
+                },
+                {
+                    "name": "base",
+                    "isMut": false,
+                    "isSigner": true,
+                    "docs": [
+                        "The base public key to use for the account's address derivation"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "basePubkey",
+                    "type": "publicKey",
+                    "docs": [
+                        "The base public key to use for the account's address derivation"
+                    ]
+                },
+                {
+                    "name": "seed",
+                    "type": "string",
+                    "docs": [
+                        "String of ASCII chars, no longer than pubkey::MAX_SEED_LEN"
+                    ]
+                },
+                {
+                    "name": "owner",
+                    "type": "publicKey",
+                    "docs": [
+                        "Owner program account"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 10
+            }
+        },
+        {
+            "name": "TransferWithSeed",
+            "docs": [
+                "Transfer lamports from a derived account address"
+            ],
+            "accounts": [
+                {
+                    "name": "fundingAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account funding the transfer"
+                    ]
+                },
+                {
+                    "name": "base",
+                    "isMut": false,
+                    "isSigner": true,
+                    "docs": [
+                        "The base public key to use for the account's address derivation"
+                    ]
+                },
+                {
+                    "name": "recipientAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The account receiving the transfer"
+                    ]
+                }
+            ],
+            "args": [
+                {
+                    "name": "lamports",
+                    "type": "u64",
+                    "docs": [
+                        "Number of lamports to transfer"
+                    ]
+                },
+                {
+                    "name": "fromSeed",
+                    "type": "string",
+                    "docs": [
+                        "Seed to use to derive the funding account address"
+                    ]
+                },
+                {
+                    "name": "fromOwner",
+                    "type": "publicKey",
+                    "docs": [
+                        "Owner to use to derive the funding account address"
+                    ]
+                }
+            ],
+            "discriminant": {
+                "type": "u32",
+                "value": 11
+            }
+        },
+        {
+            "name": "UpgradeNonceAccount",
+            "docs": [
+                "One-time idempotent upgrade of legacy nonce versions in order to bump them out of chain blockhash domain"
+            ],
+            "accounts": [
+                {
+                    "name": "nonceAccount",
+                    "isMut": true,
+                    "isSigner": false,
+                    "docs": [
+                        "The nonce account to upgrade"
+                    ]
+                }
+            ],
+            "args": [],
+            "discriminant": {
+                "type": "u32",
+                "value": 12
+            }
+        }
+    ],
+    "errors": [
+        {
+            "code": 0,
+            "name": "AccountAlreadyInUse",
+            "msg": "an account with the same address already exists"
+        },
+        {
+            "code": 1,
+            "name": "ResultWithNegativeLamports",
+            "msg": "account does not have enough SOL to perform the operation"
+        },
+        {
+            "code": 2,
+            "name": "InvalidProgramId",
+            "msg": "cannot assign account to this program id"
+        },
+        {
+            "code": 3,
+            "name": "InvalidAccountDataLength",
+            "msg": "cannot allocate account data of this length"
+        },
+        {
+            "code": 4,
+            "name": "MaxSeedLengthExceeded",
+            "msg": "length of requested seed is too long"
+        },
+        {
+            "code": 5,
+            "name": "AddressWithSeedMismatch",
+            "msg": "provided address does not match addressed derived from seed"
+        },
+        {
+            "code": 6,
+            "name": "NonceNoRecentBlockhashes",
+            "msg": "advancing stored nonce requires a populated RecentBlockhashes sysvar"
+        },
+        {
+            "code": 7,
+            "name": "NonceBlockhashNotExpired",
+            "msg": "stored nonce is still in recent_blockhashes"
+        },
+        {
+            "code": 8,
+            "name": "NonceUnexpectedBlockhashValue",
+            "msg": "specified nonce does not match stored nonce"
+        }
+    ],
+    "metadata": {
+        "origin": "hand",
+        "address": "11111111111111111111111111111111",
+        "binaryVersion": "0.1.0",
+        "libVersion": "0.1.0"
+    }
+}

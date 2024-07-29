@@ -1,16 +1,16 @@
 #![cfg(feature = "test-sbf")]
 
-use borsh::BorshDeserialize;
-use mpl_project_name::{accounts::MyAccount, instructions::CreateBuilder};
 use solana_program_test::{tokio, ProgramTest};
 use solana_sdk::{
+    native_token::LAMPORTS_PER_SOL,
     signature::{Keypair, Signer},
     transaction::Transaction,
 };
+use system_program::instructions::TransferBuilder;
 
 #[tokio::test]
-async fn create() {
-    let mut context = ProgramTest::new("mpl_project_name_program", mpl_project_name::ID, None)
+async fn transfer() {
+    let mut context = ProgramTest::new("system_program", system_program::ID, None)
         .start_with_context()
         .await;
 
@@ -18,12 +18,10 @@ async fn create() {
 
     let address = Keypair::new();
 
-    let ix = CreateBuilder::new()
-        .address(address.pubkey())
-        .authority(context.payer.pubkey())
-        .payer(context.payer.pubkey())
-        .arg1(1)
-        .arg2(2)
+    let ix = TransferBuilder::new()
+        .funding_account(context.payer.pubkey())
+        .recipient_account(address.pubkey())
+        .lamports(LAMPORTS_PER_SOL)
         .instruction();
 
     // When we create a new account.
@@ -47,10 +45,5 @@ async fn create() {
     assert!(account.is_some());
 
     let account = account.unwrap();
-    assert_eq!(account.data.len(), MyAccount::LEN);
-
-    let mut account_data = account.data.as_ref();
-    let my_account = MyAccount::deserialize(&mut account_data).unwrap();
-    assert_eq!(my_account.data.field1, 1);
-    assert_eq!(my_account.data.field2, 2);
+    assert_eq!(account.lamports, 100);
 }
