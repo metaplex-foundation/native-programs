@@ -1,6 +1,6 @@
 # Contributing to the JavaScript client
 
-This is a quick guide to help you contribute to the JavaScript client of Mpl Project Name.
+This is a quick guide to help you contribute to the JavaScript client of Solana Native Programs.
 
 ## Getting started
 
