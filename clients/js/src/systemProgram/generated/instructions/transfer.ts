@@ -8,15 +8,17 @@
 
 import {
   Context,
+  Pda,
   PublicKey,
   Signer,
+  SolAmount,
   TransactionBuilder,
+  mapAmountSerializer,
   transactionBuilder,
 } from '@metaplex-foundation/umi';
 import {
   Serializer,
   mapSerializer,
-  publicKey as publicKeySerializer,
   struct,
   u32,
   u64,
@@ -28,65 +30,52 @@ import {
 } from '../shared';
 
 // Accounts.
-export type CreateAccountInstructionAccounts = {
-  /** The payer for the new account */
+export type TransferInstructionAccounts = {
+  /** The account funding the transfer */
   fundingAccount: Signer;
-  /** The account to create */
-  newAccount: Signer;
+  /** The account receiving the transfer */
+  recipientAccount: PublicKey | Pda;
 };
 
 // Data.
-export type CreateAccountInstructionData = {
+export type TransferInstructionData = {
   discriminator: number;
-  /** Number of lamports to transfer to the new account */
-  lamports: bigint;
-  /** Number of bytes of memory to allocate */
-  space: bigint;
-  /** Address of program that will own the new account */
-  owner: PublicKey;
+  /** Number of lamports to transfer */
+  lamports: SolAmount;
 };
 
-export type CreateAccountInstructionDataArgs = {
-  /** Number of lamports to transfer to the new account */
-  lamports: number | bigint;
-  /** Number of bytes of memory to allocate */
-  space: number | bigint;
-  /** Address of program that will own the new account */
-  owner: PublicKey;
+export type TransferInstructionDataArgs = {
+  /** Number of lamports to transfer */
+  lamports: SolAmount;
 };
 
-export function getCreateAccountInstructionDataSerializer(): Serializer<
-  CreateAccountInstructionDataArgs,
-  CreateAccountInstructionData
+export function getTransferInstructionDataSerializer(): Serializer<
+  TransferInstructionDataArgs,
+  TransferInstructionData
 > {
   return mapSerializer<
-    CreateAccountInstructionDataArgs,
+    TransferInstructionDataArgs,
     any,
-    CreateAccountInstructionData
+    TransferInstructionData
   >(
-    struct<CreateAccountInstructionData>(
+    struct<TransferInstructionData>(
       [
         ['discriminator', u32()],
-        ['lamports', u64()],
-        ['space', u64()],
-        ['owner', publicKeySerializer()],
+        ['lamports', mapAmountSerializer(u64(), 'SOL', 9)],
       ],
-      { description: 'CreateAccountInstructionData' }
+      { description: 'TransferInstructionData' }
     ),
-    (value) => ({ ...value, discriminator: 0 })
-  ) as Serializer<
-    CreateAccountInstructionDataArgs,
-    CreateAccountInstructionData
-  >;
+    (value) => ({ ...value, discriminator: 2 })
+  ) as Serializer<TransferInstructionDataArgs, TransferInstructionData>;
 }
 
 // Args.
-export type CreateAccountInstructionArgs = CreateAccountInstructionDataArgs;
+export type TransferInstructionArgs = TransferInstructionDataArgs;
 
 // Instruction.
-export function createAccount(
+export function transfer(
   context: Pick<Context, 'programs'>,
-  input: CreateAccountInstructionAccounts & CreateAccountInstructionArgs
+  input: TransferInstructionAccounts & TransferInstructionArgs
 ): TransactionBuilder {
   // Program ID.
   const programId = context.programs.getPublicKey(
@@ -101,15 +90,15 @@ export function createAccount(
       isWritable: true as boolean,
       value: input.fundingAccount ?? null,
     },
-    newAccount: {
+    recipientAccount: {
       index: 1,
       isWritable: true as boolean,
-      value: input.newAccount ?? null,
+      value: input.recipientAccount ?? null,
     },
   } satisfies ResolvedAccountsWithIndices;
 
   // Arguments.
-  const resolvedArgs: CreateAccountInstructionArgs = { ...input };
+  const resolvedArgs: TransferInstructionArgs = { ...input };
 
   // Accounts in order.
   const orderedAccounts: ResolvedAccount[] = Object.values(
@@ -124,8 +113,8 @@ export function createAccount(
   );
 
   // Data.
-  const data = getCreateAccountInstructionDataSerializer().serialize(
-    resolvedArgs as CreateAccountInstructionDataArgs
+  const data = getTransferInstructionDataSerializer().serialize(
+    resolvedArgs as TransferInstructionDataArgs
   );
 
   // Bytes Created On Chain.

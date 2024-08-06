@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createUmi as basecreateUmi } from '@metaplex-foundation/umi-bundle-tests';
-import { systemProgram } from '../src';
+import { nativePrograms } from '../src';
 
 export const createUmi = async () =>
-  (await basecreateUmi()).use(systemProgram());
+  (await basecreateUmi()).use(nativePrograms());

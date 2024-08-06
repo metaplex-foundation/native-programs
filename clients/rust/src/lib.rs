@@ -1,4 +1,3 @@
-mod generated;
+pub mod system_program;
 
-pub use generated::programs::SYSTEM_PROGRAM_ID as ID;
-pub use generated::*;
+pub use system_program::ID as SYSTEM_PROGRAM_ID;

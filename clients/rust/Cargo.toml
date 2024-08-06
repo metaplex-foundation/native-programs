@@ -1,7 +1,8 @@
 [package]
+description = "Rust transaction builder clients for the Solana Native Programs"
 edition = "2021"
 license-file = "../../LICENSE"
-name = "system-program"
+name = "solana-native-programs"
 readme = "README.md"
 version = "0.1.0"
 

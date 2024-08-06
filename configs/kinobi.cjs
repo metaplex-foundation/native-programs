@@ -15,6 +15,13 @@ kinobi.update(
   })
 );
 
+kinobi.update(
+  new k.setNumberWrappersVisitor({
+    "systemProgram.CreateAccount.lamports": { kind: "SolAmount" },
+    "systemProgram.Transfer.lamports": { kind: "SolAmount" },
+  })
+);
+
 // Update accounts.
 // kinobi.update(
 //   new k.updateAccountsVisitor({
@@ -30,15 +37,15 @@ kinobi.update(
 // );
 
 // Update instructions.
-// kinobi.update(
-//   new k.updateInstructionsVisitor({
-//     create: {
-//       byteDeltas: [
-//         k.instructionByteDeltaNode(k.accountLinkNode("myAccount")),
-//       ],
-//     },
-//   })
-// );
+kinobi.update(
+  new k.updateInstructionsVisitor({
+    createAccount: {
+      byteDeltas: [
+        k.instructionByteDeltaNode(k.argumentValueNode("space")),
+      ],
+    },
+  })
+);
 
 // Set ShankAccount discriminator.
 // const key = (name) => ({ field: "key", value: k.enumValueNode("Key", name) });
@@ -50,13 +57,13 @@ kinobi.update(
 // );
 
 // Render JavaScript.
-const jsDir = path.join(clientDir, "js", "src", "generated");
+const jsDir = path.join(clientDir, "js", "src", "systemProgram/generated");
 const prettier = require(path.join(clientDir, "js", ".prettierrc.json"));
 kinobi.accept(new k.renderJavaScriptVisitor(jsDir, { prettier }));
 
 // Render Rust.
 const crateDir = path.join(clientDir, "rust");
-const rustDir = path.join(clientDir, "rust", "src", "generated");
+const rustDir = path.join(clientDir, "rust", "src", "system_program/generated");
 kinobi.accept(
   new k.renderRustVisitor(rustDir, {
     formatCode: true,

@@ -3640,6 +3640,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-native-programs"
+version = "0.1.0"
+dependencies = [
+ "assert_matches",
+ "borsh 0.10.3",
+ "num-derive 0.3.3",
+ "num-traits",
+ "serde",
+ "serde_with 3.4.0",
+ "solana-program",
+ "solana-program-test",
+ "solana-sdk",
+ "thiserror",
+]
+
+[[package]]
 name = "solana-net-utils"
 version = "1.16.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4669,22 +4685,6 @@ checksum = "a75fb188eb626b924683e3b95e3a48e63551fcfb51949de2f06a9d91dbee93c9"
 dependencies = [
  "core-foundation-sys",
  "libc",
-]
-
-[[package]]
-name = "system-program"
-version = "0.1.0"
-dependencies = [
- "assert_matches",
- "borsh 0.10.3",
- "num-derive 0.3.3",
- "num-traits",
- "serde",
- "serde_with 3.4.0",
- "solana-program",
- "solana-program-test",
- "solana-sdk",
- "thiserror",
 ]
 
 [[package]]

@@ -1,7 +1,7 @@
 import { UmiPlugin } from '@metaplex-foundation/umi';
-import { createSystemProgramProgram } from './systemProgram';
+import { createSystemProgramProgram } from ".";
 
-export const nativePrograms = (): UmiPlugin => ({
+export const systemProgram = (): UmiPlugin => ({
   install(umi) {
     umi.programs.add(createSystemProgramProgram(), false);
   },

@@ -1,7 +1,6 @@
 import { generateSigner, sol } from '@metaplex-foundation/umi';
 import test from 'ava';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { transfer } from '../src';
+import { transfer } from '../src/systemProgram';
 import { createUmi } from './_setup';
 
 test('it can transfer funds', async (t) => {
@@ -12,7 +11,7 @@ test('it can transfer funds', async (t) => {
   await transfer(umi, {
     fundingAccount: umi.identity,
     recipientAccount: address.publicKey,
-    lamports: 1 * LAMPORTS_PER_SOL,
+    lamports: sol(1),
   }).sendAndConfirm(umi);
 
   const recipientAccount = await umi.rpc.getAccount(address.publicKey);

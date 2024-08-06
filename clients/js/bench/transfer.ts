@@ -1,8 +1,7 @@
-import { generateSigner } from "@metaplex-foundation/umi";
+import { generateSigner, sol } from "@metaplex-foundation/umi";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import test from "ava";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { transfer } from '../src';
 import { createUmi } from "./_setup";
 
@@ -15,7 +14,7 @@ test('create a new account', async (t) => {
     const tx = await transfer(umi, {
         fundingAccount: umi.identity,
         recipientAccount: address.publicKey,
-        lamports: 1 * LAMPORTS_PER_SOL
+        lamports: sol(1),
     }).sendAndConfirm(umi);
 
     const compute = Number((await umi.rpc.getTransaction(tx.signature))?.meta.computeUnitsConsumed);
